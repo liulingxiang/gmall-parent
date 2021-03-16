@@ -9,14 +9,19 @@
         <outputRelativeToContentRoot value="true" />
         <module name="common-util" />
         <module name="model" />
-        <module name="service-client" />
+        <module name="service-item" />
+        <module name="service-item-client" />
         <module name="service-product" />
+        <module name="service-product-client" />
         <module name="service-test" />
         <module name="service-util" />
-        <module name="web" />
+        <module name="web-all" />
         <module name="web-util" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="weball" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -24,11 +29,16 @@
       <module name="model" options="-parameters" />
       <module name="service" options="-parameters" />
       <module name="service-client" options="-parameters" />
+      <module name="service-item" options="-parameters" />
+      <module name="service-item-client" options="-parameters" />
       <module name="service-product" options="-parameters" />
+      <module name="service-product-client" options="-parameters" />
       <module name="service-test" options="-parameters" />
       <module name="service-util" options="-parameters" />
       <module name="web" options="-parameters" />
+      <module name="web-all" options="-parameters" />
       <module name="web-util" options="-parameters" />
+      <module name="weball" options="-parameters" />
     </option>
   </component>
 </project>

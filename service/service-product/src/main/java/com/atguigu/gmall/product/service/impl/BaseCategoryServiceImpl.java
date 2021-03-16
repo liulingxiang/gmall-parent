@@ -3,9 +3,11 @@ package com.atguigu.gmall.product.service.impl;
 import com.atguigu.gmall.model.product.BaseCategory1;
 import com.atguigu.gmall.model.product.BaseCategory2;
 import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.product.BaseCategoryView;
 import com.atguigu.gmall.product.mapper.BaseCategory1Mapper;
 import com.atguigu.gmall.product.mapper.BaseCategory2Mapper;
 import com.atguigu.gmall.product.mapper.BaseCategory3Mapper;
+import com.atguigu.gmall.product.mapper.BaseCategoryViewMapper;
 import com.atguigu.gmall.product.service.BaseCategoryService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
     private BaseCategory2Mapper baseCategory2Mapper;
     @Autowired
     private BaseCategory3Mapper baseCategory3Mapper;
+    @Autowired
+    private BaseCategoryViewMapper baseCategoryViewMapper;
+
     @Override
     public List<BaseCategory1> getCategory1() {
         return baseCategory1Mapper.selectList(null);
@@ -39,6 +44,15 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
         QueryWrapper<BaseCategory3> wrapper3 = new QueryWrapper<>();
         wrapper3.eq("category2_id",category2Id);
         return baseCategory3Mapper.selectList(wrapper3);
+    }
+
+    @Override
+    public BaseCategoryView getCategoryViewByCategory3Id(Long category3Id) {
+
+        QueryWrapper<BaseCategoryView> baseCategoryViewQueryWrapper = new QueryWrapper<>();
+        baseCategoryViewQueryWrapper.eq("category3_id",category3Id);
+        BaseCategoryView baseCategoryView = baseCategoryViewMapper.selectOne(baseCategoryViewQueryWrapper);
+        return baseCategoryView;
     }
 
 
