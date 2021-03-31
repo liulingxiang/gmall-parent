@@ -1,9 +1,7 @@
 package com.atguigu.gmall.product.service.impl;
 
-import com.atguigu.gmall.model.product.BaseCategory1;
-import com.atguigu.gmall.model.product.BaseCategory2;
-import com.atguigu.gmall.model.product.BaseCategory3;
-import com.atguigu.gmall.model.product.BaseCategoryView;
+import com.atguigu.gmall.common.cache.GmallCache;
+import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.BaseCategory1Mapper;
 import com.atguigu.gmall.product.mapper.BaseCategory2Mapper;
 import com.atguigu.gmall.product.mapper.BaseCategory3Mapper;
@@ -46,6 +44,7 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
         return baseCategory3Mapper.selectList(wrapper3);
     }
 
+    @GmallCache
     @Override
     public BaseCategoryView getCategoryViewByCategory3Id(Long category3Id) {
 
@@ -55,5 +54,9 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
         return baseCategoryView;
     }
 
+    @Override
+    public List<BaseCategoryView> getBaseCategoryList() {
+        return baseCategoryViewMapper.selectList(null);
+    }
 
 }

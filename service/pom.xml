@@ -15,6 +15,11 @@
         <module>service-test</module>
         <module>service-product</module>
         <module>service-item</module>
+        <module>service-list</module>
+        <module>service-cart</module>
+        <module>service-user</module>
+        <module>service-order</module>
+        <module>service-payment</module>
     </modules>
 
     <dependencies>

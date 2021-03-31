@@ -14,6 +14,10 @@
     <modules>
         <module>service-item-client</module>
         <module>service-product-client</module>
+        <module>service-list-client</module>
+        <module>service-cart-client</module>
+        <module>service-user-client</module>
+        <module>service-order-client</module>
     </modules>
 
     <dependencies>
@@ -27,6 +31,11 @@
             <groupId>com.atguigu.gmall</groupId>
             <artifactId>model</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.29</version>
         </dependency>
     </dependencies>
 </project>

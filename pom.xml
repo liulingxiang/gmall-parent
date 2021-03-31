@@ -13,6 +13,8 @@
         <module>web</module>
         <module>service-client</module>
         <module>model</module>
+        <module>thread-test</module>
+        <module>server-gateway</module>
     </modules>
     <packaging>pom</packaging>
 

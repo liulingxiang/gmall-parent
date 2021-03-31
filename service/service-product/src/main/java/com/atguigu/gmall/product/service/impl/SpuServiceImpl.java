@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.cache.GmallCache;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.atguigu.gmall.product.service.SpuService;
@@ -92,6 +93,7 @@ public class SpuServiceImpl implements SpuService{
         return saleAttrList;
     }
 
+    @GmallCache
     @Override
     public List<SpuSaleAttr> getSpuSaleAttrListCheckBySku(Long spuId, Long skuId) {
 

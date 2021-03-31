@@ -9,4 +9,6 @@ public interface BaseTrademarkService {
     Page<BaseTrademark> baseTrademark(Long page, Long limit);
 
     List<BaseTrademark> getTrademarkList();
+
+    BaseTrademark getTrademark(Long tmId);
 }

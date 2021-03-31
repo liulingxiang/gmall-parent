@@ -1,6 +1,7 @@
 package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.common.cache.GmallCache;
+import com.atguigu.gmall.list.client.ListFeignClient;
 import com.atguigu.gmall.model.product.SkuAttrValue;
 import com.atguigu.gmall.model.product.SkuImage;
 import com.atguigu.gmall.model.product.SkuInfo;
@@ -37,6 +38,8 @@ public class SkuServiceImpl implements SkuService {
     private SkuSaleAttrValueMapper skuSaleAttrValueMapper;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    ListFeignClient listFeignClient;
     @Override
     public void saveSkuInfo(SkuInfo skuInfo) {
         // 保存sku，生成主键id
@@ -79,6 +82,7 @@ public class SkuServiceImpl implements SkuService {
         skuInfo.setIsSale(1);
         skuInfo.setId(skuId);
         skuMapper.updateById(skuInfo);
+        listFeignClient.onSale(skuId);
     }
 
     @Override
@@ -87,6 +91,7 @@ public class SkuServiceImpl implements SkuService {
         skuInfo.setId(skuId);
         skuInfo.setIsSale(0);
         skuMapper.updateById(skuInfo);
+        listFeignClient.cancelSale(skuId);
     }
 
     @GmallCache
@@ -143,6 +148,7 @@ public class SkuServiceImpl implements SkuService {
         return skuInfo;
     }
 
+    @GmallCache
     @Override
     public List<SkuImage> getSkuInfoImageList(Long skuId) {
         QueryWrapper<SkuImage> skuImageQueryWrapper = new QueryWrapper<>();
@@ -151,12 +157,14 @@ public class SkuServiceImpl implements SkuService {
         return imageList;
     }
 
+    @GmallCache
     @Override
     public BigDecimal getSkuPrice(Long skuId) {
         SkuInfo skuInfo = skuMapper.selectById(skuId);
         return skuInfo.getPrice();
     }
 
+    @GmallCache
     @Override
     public List<Map<String, Object>> getSaleAttrValuesBySpu(Long spuId) {
         List<Map<String,Object>> mapList = skuSaleAttrValueMapper.selectSaleAttrValuesBySpu(spuId);
