@@ -75,7 +75,6 @@ public class AuthFilter implements GlobalFilter {
                     response.getHeaders().set(HttpHeaders.LOCATION, "http://passport.gmall.com/login.html?originUrl=" + uri);// 将重定向的地址信息设置到http的header中
                     Mono<Void> voidMono = response.setComplete();// 返回mono给springmvc容器处理
                     return voidMono;
-
                 }
             }
         }

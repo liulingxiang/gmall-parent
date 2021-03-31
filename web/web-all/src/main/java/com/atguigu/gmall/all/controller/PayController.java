@@ -13,6 +13,12 @@ public class PayController {
     @Autowired
     OrderFeignClient orderFeignClient;
 
+    @RequestMapping("success")
+    public String success(){
+
+        return "payment/success";
+    }
+
     @RequestMapping("pay.html")
     public String pay(Long orderId, Model model){
 

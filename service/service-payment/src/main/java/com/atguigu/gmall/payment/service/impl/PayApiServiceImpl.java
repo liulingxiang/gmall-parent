@@ -4,12 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.atguigu.gmall.model.enums.PaymentStatus;
+import com.atguigu.gmall.model.enums.PaymentType;
 import com.atguigu.gmall.model.order.OrderInfo;
+import com.atguigu.gmall.model.payment.PaymentInfo;
 import com.atguigu.gmall.order.client.OrderFeignClient;
+import com.atguigu.gmall.payment.mapper.PaymentInfoMapper;
 import com.atguigu.gmall.payment.service.PayApiService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +26,8 @@ public class PayApiServiceImpl implements PayApiService {
     OrderFeignClient orderFeignClient;
     @Autowired
     AlipayClient alipayClient;
+    @Autowired
+    PaymentInfoMapper paymentInfoMapper;
 
     @Override
     public String tradePagePay(String userId, Long orderId) {
@@ -45,6 +53,25 @@ public class PayApiServiceImpl implements PayApiService {
             e.printStackTrace();
         }
 
+        //记录支付信息
+        PaymentInfo paymentInfo = new PaymentInfo();
+        paymentInfo.setCreateTime(new Date());
+        paymentInfo.setOutTradeNo(orderInfo.getOutTradeNo());
+        paymentInfo.setOrderId(orderInfo.getId());
+        paymentInfo.setPaymentStatus(PaymentStatus.UNPAID.toString());
+        paymentInfo.setPaymentType(PaymentType.ALIPAY.getComment());
+        paymentInfo.setTotalAmount(orderInfo.getTotalAmount());
+        paymentInfo.setSubject(orderInfo.getOrderDetailList().get(0).getSkuName());
+        paymentInfoMapper.insert(paymentInfo);
+
+
         return form;
+    }
+
+    @Override
+    public void callbackUpdate(PaymentInfo paymentInfo) {
+        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("out_trade_no",paymentInfo.getOutTradeNo());
+        paymentInfoMapper.update(paymentInfo,queryWrapper);
     }
 }
