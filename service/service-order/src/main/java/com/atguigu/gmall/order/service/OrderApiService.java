@@ -15,4 +15,8 @@ public interface OrderApiService {
     void saveOrder(OrderInfo orderInfo);
 
     OrderInfo getOrderInfoById(Long orderId);
+
+    void updateOrderPay(OrderInfo orderInfo);
+
+    String saveSeckillOrder(OrderInfo orderInfo);
 }

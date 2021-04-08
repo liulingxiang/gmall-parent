@@ -9,13 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="common-util" />
         <module name="model" />
+        <module name="rabbit-util" />
         <module name="server-gateway" />
+        <module name="service-activity" />
+        <module name="service-activity-client" />
         <module name="service-cart" />
         <module name="service-cart-client" />
         <module name="service-item" />
         <module name="service-item-client" />
         <module name="service-list" />
         <module name="service-list-client" />
+        <module name="service-mq" />
         <module name="service-order" />
         <module name="service-order-client" />
         <module name="service-payment" />
@@ -26,6 +30,7 @@
         <module name="service-user-client" />
         <module name="service-util" />
         <module name="thread-test" />
+        <module name="ware-manage" />
         <module name="web-all" />
         <module name="web-util" />
       </profile>
@@ -38,8 +43,11 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="common-util" options="-parameters" />
       <module name="model" options="-parameters" />
+      <module name="rabbit-util" options="-parameters" />
       <module name="server-gateway" options="-parameters" />
       <module name="service" options="-parameters" />
+      <module name="service-activity" options="-parameters" />
+      <module name="service-activity-client" options="-parameters" />
       <module name="service-cart" options="-parameters" />
       <module name="service-cart-client" options="-parameters" />
       <module name="service-client" options="-parameters" />
@@ -47,6 +55,7 @@
       <module name="service-item-client" options="-parameters" />
       <module name="service-list" options="-parameters" />
       <module name="service-list-client" options="-parameters" />
+      <module name="service-mq" options="-parameters" />
       <module name="service-order" options="-parameters" />
       <module name="service-order-client" options="-parameters" />
       <module name="service-payment" options="-parameters" />
@@ -57,6 +66,7 @@
       <module name="service-user-client" options="-parameters" />
       <module name="service-util" options="-parameters" />
       <module name="thread-test" options="-parameters" />
+      <module name="ware-manage" options="-parameters" />
       <module name="web" options="-parameters" />
       <module name="web-all" options="-parameters" />
       <module name="web-util" options="-parameters" />

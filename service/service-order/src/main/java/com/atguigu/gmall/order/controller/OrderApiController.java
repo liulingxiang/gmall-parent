@@ -20,6 +20,14 @@ public class OrderApiController {
     @Autowired
     OrderApiService orderApiService;
 
+    @RequestMapping("saveOrder")
+    String saveOrder(@RequestBody OrderInfo orderInfo){
+
+        String orderId = orderApiService.saveSeckillOrder(orderInfo);
+
+        return orderId;
+    }
+
     @RequestMapping("getOrderInfoById/{orderId}")
     OrderInfo getOrderInfoById(@PathVariable("orderId") Long orderId) {
         return orderApiService.getOrderInfoById(orderId);

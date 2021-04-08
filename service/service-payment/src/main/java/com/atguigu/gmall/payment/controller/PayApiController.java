@@ -19,19 +19,25 @@ public class PayApiController {
     PayApiService payApiService;
 
     @RequestMapping("alipay/alipayCallBack")
-    public String alipayCallBack(HttpServletRequest request){
+    public String alipayCallBack(HttpServletRequest request) {
 
         String callbackContent = request.getQueryString();// 支付回调的参数
+        String out_trade_no = request.getParameter("out_trade_no");
 
-        PaymentInfo paymentInfo = new PaymentInfo();
-        paymentInfo.setCreateTime(new Date());
-        paymentInfo.setOutTradeNo(request.getParameter("out_trade_no"));
-        paymentInfo.setTradeNo(request.getParameter("trade_no"));
-        paymentInfo.setPaymentStatus(PaymentStatus.UNPAID.toString());
-        paymentInfo.setCallbackContent(callbackContent);
+        //幂等性检查
+        String payStatus = payApiService.checkPayCallBack(out_trade_no);
+        if (payStatus.equals("UNPAID")) {
+            PaymentInfo paymentInfo = new PaymentInfo();
+            paymentInfo.setCreateTime(new Date());
+            paymentInfo.setOutTradeNo(out_trade_no);
+            paymentInfo.setTradeNo(request.getParameter("trade_no"));
+            paymentInfo.setPaymentStatus(PaymentStatus.UNPAID.toString());
+            paymentInfo.setCallbackContent(callbackContent);
 
-        //修改支付数据
-        payApiService.callbackUpdate(paymentInfo);
+            //更新支付状态
+            payApiService.callbackUpdate(paymentInfo);
+            //通知订单系统
+        }
 
         String form = "<form action='http://payment.gmall.com/success'></form><script>document.forms[0].submit();</script>";
 
@@ -39,11 +45,11 @@ public class PayApiController {
     }
 
     @RequestMapping("alipay/submit/{orderId}")
-    public String alipay(HttpServletRequest request,@PathVariable("orderId") Long orderId){
+    public String alipay(HttpServletRequest request, @PathVariable("orderId") Long orderId) {
 
         String userId = request.getHeader("userId");
 
-        String form = payApiService.tradePagePay(userId,orderId);
+        String form = payApiService.tradePagePay(userId, orderId);
         // 向页面输入一个form表单的字符串
         return form;
     }

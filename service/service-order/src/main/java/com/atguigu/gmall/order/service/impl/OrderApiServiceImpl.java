@@ -1,13 +1,18 @@
 package com.atguigu.gmall.order.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.cart.client.CartFeignClient;
 import com.atguigu.gmall.model.cart.CartInfo;
 import com.atguigu.gmall.model.enums.ProcessStatus;
 import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
+import com.atguigu.gmall.model.ware.WareOrderTask;
+import com.atguigu.gmall.model.ware.WareOrderTaskDetail;
 import com.atguigu.gmall.order.mapper.OrderDetailMapper;
 import com.atguigu.gmall.order.mapper.OrderInfoMapper;
 import com.atguigu.gmall.order.service.OrderApiService;
+import com.atguigu.gmall.rabbit.constant.MqConst;
+import com.atguigu.gmall.rabbit.service.RabbitService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +33,8 @@ public class OrderApiServiceImpl implements OrderApiService {
     RedisTemplate redisTemplate;
     @Autowired
     OrderInfoMapper orderInfoMapper;
+    @Autowired
+    RabbitService rabbitService;
 
     @Override
     public List<OrderDetail> getOrderDetails(String userId) {
@@ -111,6 +118,63 @@ public class OrderApiServiceImpl implements OrderApiService {
         return orderInfo;
     }
 
+    @Override
+    public void updateOrderPay(OrderInfo orderInfo) {
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+
+        orderInfoMapper.update(orderInfo,queryWrapper);
+        //封装订单库存任务
+        OrderInfo orderInfoById = getOrderInfoByOutTradeNo(orderInfo.getOutTradeNo());
+        WareOrderTask wareOrderTask = new WareOrderTask();
+        wareOrderTask.setOrderBody(orderInfoById.getTradeBody());
+        wareOrderTask.setTrackingNo(orderInfoById.getTrackingNo());
+        wareOrderTask.setPaymentWay(orderInfoById.getPaymentWay());
+        wareOrderTask.setCreateTime(new Date());
+        wareOrderTask.setConsigneeTel(orderInfoById.getConsigneeTel());
+        wareOrderTask.setConsignee(orderInfoById.getConsignee());
+        wareOrderTask.setOrderId(String.valueOf(orderInfoById.getId()));
+
+        ArrayList<WareOrderTaskDetail> wareOrderTaskDetails = new ArrayList<>();
+        List<OrderDetail> orderDetailList = orderInfo.getOrderDetailList();
+        for (OrderDetail orderDetail : orderDetailList) {
+            WareOrderTaskDetail wareOrderTaskDetail = new WareOrderTaskDetail();
+            wareOrderTaskDetail.setSkuId(String.valueOf(orderDetail.getSkuId()));
+            wareOrderTaskDetail.setSkuName(orderDetail.getSkuName());
+            wareOrderTaskDetail.setSkuNum(orderDetail.getSkuNum());
+            wareOrderTaskDetails.add(wareOrderTaskDetail);
+        }
+        wareOrderTask.setDetails(wareOrderTaskDetails);
+        //根据订单状态通知库存系统，锁定库存
+        rabbitService.sendMessage(MqConst.EXCHANGE_DIRECT_WARE_STOCK,MqConst.ROUTING_WARE_STOCK, JSON.toJSONString(wareOrderTask));
+
+    }
+
+    @Override
+    public String saveSeckillOrder(OrderInfo orderInfo) {
+        orderInfoMapper.insert(orderInfo);
+        List<OrderDetail> orderDetails = orderInfo.getOrderDetailList();
+        for (OrderDetail orderDetail : orderDetails) {
+            orderDetail.setOrderId(orderInfo.getId());
+            orderDetailMapper.insert(orderDetail);
+        }
+        String orderId = orderInfo.getId()+"";
+        return orderId;
+    }
+
+    private OrderInfo getOrderInfoByOutTradeNo(String outTradeNo) {
+        QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("out_trade_no",outTradeNo);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+
+        QueryWrapper<OrderDetail> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("order_id",orderInfo.getId());
+        List<OrderDetail> orderDetails = orderDetailMapper.selectList(queryWrapper1);
+
+        orderInfo.setOrderDetailList(orderDetails);
+
+        return orderInfo;
+    }
+
     private BigDecimal getTotalAmount(List<OrderDetail> orderDetailList) {
         BigDecimal bigDecimal = new BigDecimal("0");
         if (orderDetailList != null && orderDetailList.size() > 0) {
@@ -122,6 +186,6 @@ public class OrderApiServiceImpl implements OrderApiService {
             }
         }
 
-        return null;
+        return bigDecimal;
     }
 }

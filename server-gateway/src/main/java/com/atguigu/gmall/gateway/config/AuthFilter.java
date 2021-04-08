@@ -69,7 +69,7 @@ public class AuthFilter implements GlobalFilter {
         for (String splitAuthUrl : splitAuthUrls) {
             if (uri.contains(splitAuthUrl)) {
                 // 需要登录，调用cas对请求的token进行认证
-                if (StringUtils.isEmpty(userId)){
+                if (StringUtils.isEmpty(userId)) {
                     // 认证失败，设置重定向到登录页面
                     response.setStatusCode(HttpStatus.SEE_OTHER);// http重定向协议
                     response.getHeaders().set(HttpHeaders.LOCATION, "http://passport.gmall.com/login.html?originUrl=" + uri);// 将重定向的地址信息设置到http的header中
