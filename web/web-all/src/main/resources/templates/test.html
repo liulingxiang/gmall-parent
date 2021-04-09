@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .red{
+            background-color: red;
+            width: 100px;
+            height: 100px;
+        }
+        .green{
+            background-color: green;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+<h1>thymeleaf测试页面</h1>
+取值:
+<input value="hello" th:value="${str}"/>
+<br />
+循环:
+<!--<c:forEach></c:forEach>-->
+<input value="hello" th:each="a:${list}" th:value="${a}"/>
+
+<p th:each="b:${list}">
+    <input value="hello" th:value="${b}"/>
+</p>
+<br />
+
+判断:
+<!--<c:if></c:if>-->
+<input value="我存在" th:if="${0==num}"/>
+<div th:class="(${1==num})?'green':'red'"></div>
+<br />
+页面引入:
+<div th:include="testHeader::small"></div>
+<br />
+与js交互:
+<a th:href="'javascript:a(\''+${num}+'\');'" >点我</a>
+
+<a href="javascript:a('奥特曼');" >点他</a>
+<script type="text/javascript" language="JavaScript">
+    function a(num) {
+        alert(num);
+    }
+</script>
+
+
+</body>
+</html>
